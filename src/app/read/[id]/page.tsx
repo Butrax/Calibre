@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Download } from 'lucide-react';
@@ -9,43 +8,33 @@ import { Button } from '@/components/ui/button';
 
 async function getBookById(id: string): Promise<Book | null> {
   const calibreDir = path.join(process.cwd(), 'src', 'calibre');
-  
+  const decodedPath = Buffer.from(id, 'base64url').toString('utf8');
+  const [authorName, bookFolderName] = decodedPath.split('/');
+
+  if (!authorName || !bookFolderName) return null;
+
   try {
-    if (fs.existsSync(calibreDir)) {
-      const authorFolders = fs.readdirSync(calibreDir, { withFileTypes: true })
-        .filter(dirent => dirent.isDirectory());
+      const bookPath = path.join(calibreDir, authorName, bookFolderName);
+      if (fs.existsSync(bookPath)) {
+        const files = fs.readdirSync(bookPath);
 
-      for (const authorFolder of authorFolders) {
-        const authorPath = path.join(calibreDir, authorFolder.name);
-        const bookFolders = fs.readdirSync(authorPath, { withFileTypes: true })
-          .filter(dirent => dirent.isDirectory());
+        const pdfFile = files.find(f => f.toLowerCase().endsWith('.pdf'));
+        const coverFile = files.find(f => f.toLowerCase() === 'cover.jpg');
 
-        for (const bookFolder of bookFolders) {
-          const bookId = `${authorFolder.name}-${bookFolder.name}`;
-          if (bookId === id) {
-            const bookPath = path.join(authorPath, bookFolder.name);
-            const files = fs.readdirSync(bookPath);
+        if (pdfFile && coverFile) {
+          const titleMatch = bookFolderName.match(/^(.*)\s\(\d+\)$/);
+          const title = titleMatch ? titleMatch[1] : bookFolderName;
 
-            const pdfFile = files.find(f => f.toLowerCase().endsWith('.pdf'));
-            const coverFile = files.find(f => f.toLowerCase() === 'cover.jpg');
-
-            if (pdfFile && coverFile) {
-              const titleMatch = bookFolder.name.match(/^(.*)\s\(\d+\)$/);
-              const title = titleMatch ? titleMatch[1] : bookFolder.name;
-
-              return {
-                id: bookId,
-                title: title,
-                author: authorFolder.name,
-                coverUrl: `/calibre/${authorFolder.name}/${bookFolder.name}/${coverFile}`,
-                pdfUrl: `/calibre/${authorFolder.name}/${bookFolder.name}/${pdfFile}`,
-                aiHint: 'book cover',
-              };
-            }
-          }
+          return {
+            id: id,
+            title: title,
+            author: authorName,
+            coverUrl: `/api/calibre/cover/${authorName}/${bookFolderName}/${coverFile}`,
+            pdfUrl: `/api/calibre/pdf/${authorName}/${bookFolderName}/${pdfFile}`,
+            aiHint: 'book cover',
+          };
         }
       }
-    }
   } catch (error) {
     console.error("Erreur lors de la lecture de la bibliothèque Calibre:", error);
     return null;
@@ -53,7 +42,6 @@ async function getBookById(id: string): Promise<Book | null> {
   
   return null;
 }
-
 
 export default async function ReadBookPage({ params }: { params: { id: string } }) {
   const book = await getBookById(params.id);
@@ -84,14 +72,12 @@ export default async function ReadBookPage({ params }: { params: { id: string } 
         </Button>
       </header>
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto max-w-4xl py-8">
-            <div className="bg-white p-2 rounded-md shadow-lg">
-                <iframe
-                  src={`${book.pdfUrl}#view=fitH`}
-                  title={`Lecteur PDF pour ${book.title}`}
-                  className="w-full h-screen border-none"
-                />
-            </div>
+        <div className="w-full h-full">
+            <iframe
+              src={book.pdfUrl}
+              title={`Lecteur PDF pour ${book.title}`}
+              className="w-full h-full border-none"
+            />
         </div>
       </main>
     </div>

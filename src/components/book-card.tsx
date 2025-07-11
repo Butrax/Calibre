@@ -20,7 +20,6 @@ export function BookCard({ book }: BookCardProps) {
               height={600}
               className="h-full w-full object-cover"
               data-ai-hint={book.aiHint}
-              unoptimized // Important for local images served from /public
             />
           </div>
         </CardContent>

@@ -28,9 +28,8 @@ async function getCalibreBooks(): Promise<Book[]> {
           const coverFile = files.find(f => f.toLowerCase() === 'cover.jpg');
 
           if (pdfFile && coverFile) {
-            const bookId = `${authorFolder.name}-${bookFolder.name}`; // Simple ID generation
+            const bookId = Buffer.from(`${authorFolder.name}/${bookFolder.name}`).toString('base64url');
             
-            // Extract book title from folder name (remove calibre id if present)
             const titleMatch = bookFolder.name.match(/^(.*)\s\(\d+\)$/);
             const title = titleMatch ? titleMatch[1] : bookFolder.name;
 
@@ -38,8 +37,8 @@ async function getCalibreBooks(): Promise<Book[]> {
               id: bookId,
               title: title,
               author: authorFolder.name,
-              coverUrl: `/calibre/${authorFolder.name}/${bookFolder.name}/${coverFile}`,
-              pdfUrl: `/calibre/${authorFolder.name}/${bookFolder.name}/${pdfFile}`,
+              coverUrl: `/api/calibre/cover/${authorFolder.name}/${bookFolder.name}/${coverFile}`,
+              pdfUrl: `/api/calibre/pdf/${authorFolder.name}/${bookFolder.name}/${pdfFile}`,
               aiHint: 'book cover',
             });
           }
@@ -48,7 +47,6 @@ async function getCalibreBooks(): Promise<Book[]> {
     }
   } catch (error) {
     console.error("Erreur lors de la lecture de la bibliothèque Calibre:", error);
-    // Return empty array or mock data on error
     return [];
   }
   
