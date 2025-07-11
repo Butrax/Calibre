@@ -10,10 +10,6 @@ type GetDriveBooksResult = {
   error?: string;
 }
 
-type HomePageProps = {
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-
 async function getDriveBooks(driveUrl: string, apiKey: string): Promise<GetDriveBooksResult> {
   if (!driveUrl || !apiKey) {
     return { books: [] };
@@ -79,7 +75,7 @@ async function getDriveBooks(driveUrl: string, apiKey: string): Promise<GetDrive
   }
 }
 
-export default async function Home({ searchParams }: HomePageProps) {
+export default async function Home({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const drive_url = typeof searchParams.drive_url === 'string' ? searchParams.drive_url : '';
   const api_key = typeof searchParams.api_key === 'string' ? searchParams.api_key : '';
   const { books, error } = await getDriveBooks(drive_url, api_key);
