@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { Book } from '@/lib/types';
 
+export const dynamic = 'force-dynamic';
+
 type GetDriveBooksResult = {
   books: Book[];
   error?: string;
