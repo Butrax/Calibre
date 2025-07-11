@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 import { Link2, BookOpen } from "lucide-react"
+import Link from 'next/link';
 
 type BookCardProps = {
   book: Book;
@@ -33,16 +34,20 @@ export function BookCard({ book }: BookCardProps) {
         <div className="group block outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg cursor-pointer">
           <Card className="overflow-hidden transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:-translate-y-1">
             <CardContent className="p-0">
-              <div className="aspect-[2/3] w-full">
-                <Image
-                  src={book.coverUrl}
-                  alt={`Couverture de ${book.title}`}
-                  width={400}
-                  height={600}
-                  className="h-full w-full object-cover"
-                  data-ai-hint={book.aiHint}
-                />
-              </div>
+              <Link href={`/read?pdf=${encodeURIComponent(book.pdfUrl)}`} passHref legacyBehavior>
+                <a target="_blank" rel="noopener noreferrer">
+                  <div className="aspect-[2/3] w-full">
+                    <Image
+                      src={book.coverUrl}
+                      alt={`Couverture de ${book.title}`}
+                      width={400}
+                      height={600}
+                      className="h-full w-full object-cover"
+                      data-ai-hint={book.aiHint}
+                    />
+                  </div>
+                </a>
+              </Link>
             </CardContent>
             <CardFooter className="p-3">
               <h3 className="font-headline text-sm font-semibold truncate" title={book.title}>
