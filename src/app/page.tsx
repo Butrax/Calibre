@@ -10,6 +10,10 @@ type GetDriveBooksResult = {
   error?: string;
 }
 
+type HomePageProps = {
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
 async function getDriveBooks(driveUrl: string, apiKey: string): Promise<GetDriveBooksResult> {
   if (!driveUrl || !apiKey) {
     return { books: [] };
@@ -60,7 +64,7 @@ async function getDriveBooks(driveUrl: string, apiKey: string): Promise<GetDrive
             title: title,
             author: authorFolder.name,
             coverUrl: `https://www.googleapis.com/drive/v3/files/${coverFile.id}?alt=media&key=${apiKey}`,
-            pdfUrl: `https://www.googleapis.com/drive/v3/files/${pdfFile.id}?alt=media&key=${apiKey}`,
+            pdfUrl: `https://www.googleapis.com/drive/v3/files/${pdfFile.id}/view?usp=sharing`,
             driveLink: `https://drive.google.com/file/d/${pdfFile.id}/view`,
             aiHint: 'book cover',
           };
@@ -75,9 +79,10 @@ async function getDriveBooks(driveUrl: string, apiKey: string): Promise<GetDrive
   }
 }
 
-export default async function Home({ searchParams }: { searchParams: { drive_url?: string; api_key?: string } }) {
-  const { drive_url, api_key } = searchParams;
-  const { books, error } = await getDriveBooks(drive_url || '', api_key || '');
+export default async function Home({ searchParams }: HomePageProps) {
+  const drive_url = typeof searchParams.drive_url === 'string' ? searchParams.drive_url : '';
+  const api_key = typeof searchParams.api_key === 'string' ? searchParams.api_key : '';
+  const { books, error } = await getDriveBooks(drive_url, api_key);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
