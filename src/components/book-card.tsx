@@ -21,11 +21,13 @@ export function BookCard({ book }: BookCardProps) {
   const { toast } = useToast()
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(book.driveLink);
-    toast({
-      title: "Lien copié !",
-      description: "Le lien vers le fichier Google Drive a été copié dans le presse-papiers.",
-    });
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(book.driveLink);
+      toast({
+        title: "Lien copié !",
+        description: "Le lien vers le fichier Google Drive a été copié dans le presse-papiers.",
+      });
+    }
   }
 
   return (
@@ -34,8 +36,7 @@ export function BookCard({ book }: BookCardProps) {
         <div className="group block outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg cursor-pointer">
           <Card className="overflow-hidden transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:-translate-y-1">
             <CardContent className="p-0">
-              <Link href={`/read?pdf=${encodeURIComponent(book.pdfUrl)}`} passHref legacyBehavior>
-                <a target="_blank" rel="noopener noreferrer">
+              <Link href={book.pdfUrl} target="_blank" rel="noopener noreferrer">
                   <div className="aspect-[2/3] w-full">
                     <Image
                       src={book.coverUrl}
@@ -46,7 +47,6 @@ export function BookCard({ book }: BookCardProps) {
                       data-ai-hint={book.aiHint}
                     />
                   </div>
-                </a>
               </Link>
             </CardContent>
             <CardFooter className="p-3">
