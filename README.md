@@ -2,7 +2,7 @@
 
 Ceci est une application Next.js qui vous permet de parcourir et de lire votre bibliothèque de livres Calibre hébergée sur un dossier public Google Drive.
 
-## Démarrage rapide
+## Démarrage rapide (Développement local)
 
 Pour lancer l'application en mode développement local :
 
@@ -20,34 +20,14 @@ Ouvrez [http://localhost:9002](http://localhost:9002) dans votre navigateur.
 
 L'application chargera et affichera les livres de votre dossier.
 
-## Déploiement sur Firebase App Hosting
+## Déploiement (Mise en ligne)
 
-Ce projet est pré-configuré pour un déploiement facile sur Firebase App Hosting.
+Ce projet est pré-configuré pour un déploiement facile et rapide sur **Firebase App Hosting**.
 
-1.  **Installez Firebase CLI :**
-    Si vous ne l'avez pas, installez l'outil en ligne de commande de Firebase.
-    ```bash
-    npm install -g firebase-tools
-    ```
+La manière la plus simple de déployer votre application est d'utiliser le bouton **"Publish"** en haut à droite de votre interface de développement.
 
-2.  **Connectez-vous à Firebase :**
-    ```bash
-    firebase login
-    ```
+Un clic sur ce bouton va automatiquement :
+1.  Compiler votre application pour la production.
+2.  La déployer sur Firebase App Hosting.
 
-3.  **Initialisez Firebase dans votre projet :**
-    (Si vous ne l'avez pas déjà fait)
-    ```bash
-    firebase init hosting
-    ```
-    - Sélectionnez `Use an existing project` et choisissez votre projet Firebase.
-    - Quand il vous demande `What do you want to use as your public directory?`, entrez `.next`.
-    - Configurez comme une "single-page app" (SPA) : `Yes`.
-    - Mettez en place les "automatic builds and deploys with GitHub?" : `No`.
-
-4.  **Déployez votre application :**
-    ```bash
-    npm run build && firebase deploy --only hosting
-    ```
-
-Votre application sera en ligne ! C'est généralement beaucoup plus direct que Vercel pour les projets de ce type.
+Votre application sera en ligne en quelques instants ! C'est généralement beaucoup plus direct que d'autres plateformes pour les projets de ce type. Pour un usage personnel, le service restera très probablement dans les limites du généreux **niveau gratuit** de Firebase.
