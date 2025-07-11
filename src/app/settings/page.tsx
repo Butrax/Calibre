@@ -2,6 +2,27 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SettingsForm } from '@/components/settings-form';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function SettingsFormSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-1/3" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+      </div>
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-1/3" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+      </div>
+      <Skeleton className="h-10 w-40" />
+    </div>
+  )
+}
+
 
 export default function SettingsPage() {
   return (
@@ -16,7 +37,9 @@ export default function SettingsPage() {
       </header>
       <main className="px-4 py-8 md:px-6 md:py-12">
         <div className="max-w-2xl mx-auto">
-          <SettingsForm />
+          <Suspense fallback={<SettingsFormSkeleton />}>
+            <SettingsForm />
+          </Suspense>
         </div>
       </main>
     </div>
