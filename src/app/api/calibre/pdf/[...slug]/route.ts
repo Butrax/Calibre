@@ -19,6 +19,7 @@ export async function GET(
         status: 200,
         headers: {
           'Content-Type': 'application/pdf',
+          'Content-Disposition': `inline; filename="${path.basename(fullPath)}"`,
         },
       });
     } catch (error) {
