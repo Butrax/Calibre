@@ -61,6 +61,7 @@ async function getDriveBooks(driveUrl: string, apiKey: string): Promise<GetDrive
             author: authorFolder.name,
             coverUrl: `https://www.googleapis.com/drive/v3/files/${coverFile.id}?alt=media&key=${apiKey}`,
             pdfUrl: `https://www.googleapis.com/drive/v3/files/${pdfFile.id}?alt=media&key=${apiKey}`,
+            driveLink: `https://drive.google.com/file/d/${pdfFile.id}/view`,
             aiHint: 'book cover',
           };
           books.push(book);

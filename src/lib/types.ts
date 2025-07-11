@@ -4,5 +4,6 @@ export type Book = {
   author: string;
   coverUrl: string;
   pdfUrl: string;
+  driveLink: string;
   aiHint: string;
 };
