@@ -36,7 +36,7 @@ export function BookCard({ book }: BookCardProps) {
   const handleTouchStart = useCallback(() => {
     longPressTimer.current = setTimeout(() => {
       setIsContextMenuOpen(true);
-    }, 800); // 800ms delay for long press
+    }, 2000); // 2000ms (2s) delay for long press
   }, []);
 
   const handleTouchEnd = useCallback(() => {
