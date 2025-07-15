@@ -12,7 +12,7 @@ import {
 import { useToast } from "@/hooks/use-toast"
 import { Link2, BookOpen } from "lucide-react"
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 type BookCardProps = {
   book: Book;
@@ -21,6 +21,7 @@ type BookCardProps = {
 export function BookCard({ book }: BookCardProps) {
   const { toast } = useToast()
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  const longPressTimer = useRef<NodeJS.Timeout>();
 
   const copyToClipboard = () => {
     if (navigator.clipboard) {
@@ -32,7 +33,19 @@ export function BookCard({ book }: BookCardProps) {
     }
   }
 
-  const handleContextMenu = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleTouchStart = useCallback(() => {
+    longPressTimer.current = setTimeout(() => {
+      setIsContextMenuOpen(true);
+    }, 800); // 800ms delay for long press
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
+  }, []);
+
+  const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsContextMenuOpen(true);
   };
@@ -40,30 +53,33 @@ export function BookCard({ book }: BookCardProps) {
   return (
     <DropdownMenu open={isContextMenuOpen} onOpenChange={setIsContextMenuOpen}>
       <DropdownMenuTrigger asChild>
-        <Card 
-          className="group overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
-          onContextMenu={handleContextMenu}
-        >
-          <Link href={book.pdfUrl} target="_blank" rel="noopener noreferrer" aria-label={`Lire ${book.title}`}>
-            <CardContent className="p-0">
-                <div className="aspect-[2/3] w-full">
-                  <Image
-                    src={book.coverUrl}
-                    alt={`Couverture de ${book.title}`}
-                    width={400}
-                    height={600}
-                    className="h-full w-full object-cover"
-                    data-ai-hint={book.aiHint}
-                  />
-                </div>
-            </CardContent>
-          </Link>
-          <CardFooter className="p-3">
-            <h3 className="font-headline text-sm font-semibold truncate" title={book.title}>
-              {book.title}
-            </h3>
-          </CardFooter>
-        </Card>
+          <Card 
+            className="group overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
+            onContextMenu={handleContextMenu}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchEnd} // Cancel long press if user scrolls
+          >
+            <Link href={book.pdfUrl} target="_blank" rel="noopener noreferrer" aria-label={`Lire ${book.title}`} className="focus:outline-none" tabIndex={-1}>
+              <CardContent className="p-0">
+                  <div className="aspect-[2/3] w-full">
+                    <Image
+                      src={book.coverUrl}
+                      alt={`Couverture de ${book.title}`}
+                      width={400}
+                      height={600}
+                      className="h-full w-full object-cover"
+                      data-ai-hint={book.aiHint}
+                    />
+                  </div>
+              </CardContent>
+            </Link>
+            <CardFooter className="p-3">
+              <h3 className="font-headline text-sm font-semibold truncate" title={book.title}>
+                {book.title}
+              </h3>
+            </CardFooter>
+          </Card>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem asChild>
