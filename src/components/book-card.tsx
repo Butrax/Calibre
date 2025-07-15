@@ -12,6 +12,7 @@ import {
 import { useToast } from "@/hooks/use-toast"
 import { Link2, BookOpen } from "lucide-react"
 import Link from 'next/link';
+import { useState } from 'react';
 
 type BookCardProps = {
   book: Book;
@@ -19,6 +20,7 @@ type BookCardProps = {
 
 export function BookCard({ book }: BookCardProps) {
   const { toast } = useToast()
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
 
   const copyToClipboard = () => {
     if (navigator.clipboard) {
@@ -30,32 +32,38 @@ export function BookCard({ book }: BookCardProps) {
     }
   }
 
+  const handleContextMenu = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    setIsContextMenuOpen(true);
+  };
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isContextMenuOpen} onOpenChange={setIsContextMenuOpen}>
       <DropdownMenuTrigger asChild>
-        <div className="group block outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg cursor-pointer">
-          <Card className="overflow-hidden transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:-translate-y-1">
+        <Card 
+          className="group overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
+          onContextMenu={handleContextMenu}
+        >
+          <Link href={book.pdfUrl} target="_blank" rel="noopener noreferrer" aria-label={`Lire ${book.title}`}>
             <CardContent className="p-0">
-              <Link href={book.pdfUrl} target="_blank" rel="noopener noreferrer">
-                  <div className="aspect-[2/3] w-full">
-                    <Image
-                      src={book.coverUrl}
-                      alt={`Couverture de ${book.title}`}
-                      width={400}
-                      height={600}
-                      className="h-full w-full object-cover"
-                      data-ai-hint={book.aiHint}
-                    />
-                  </div>
-              </Link>
+                <div className="aspect-[2/3] w-full">
+                  <Image
+                    src={book.coverUrl}
+                    alt={`Couverture de ${book.title}`}
+                    width={400}
+                    height={600}
+                    className="h-full w-full object-cover"
+                    data-ai-hint={book.aiHint}
+                  />
+                </div>
             </CardContent>
-            <CardFooter className="p-3">
-              <h3 className="font-headline text-sm font-semibold truncate" title={book.title}>
-                {book.title}
-              </h3>
-            </CardFooter>
-          </Card>
-        </div>
+          </Link>
+          <CardFooter className="p-3">
+            <h3 className="font-headline text-sm font-semibold truncate" title={book.title}>
+              {book.title}
+            </h3>
+          </CardFooter>
+        </Card>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem asChild>
