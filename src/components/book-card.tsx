@@ -85,7 +85,7 @@ export function BookCard({ book }: BookCardProps) {
         <DropdownMenuItem asChild>
           <a href={book.pdfUrl} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
             <BookOpen className="mr-2 h-4 w-4" />
-            <span>Lire le livre</span>
+            <span>Télécharger le livre</span>
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={copyToClipboard} className="cursor-pointer">
