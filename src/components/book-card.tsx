@@ -11,8 +11,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 import { Link2, BookOpen } from "lucide-react"
-import Link from 'next/link';
-import { useState, useRef, useCallback } from 'react';
 
 type BookCardProps = {
   book: Book;
@@ -20,8 +18,6 @@ type BookCardProps = {
 
 export function BookCard({ book }: BookCardProps) {
   const { toast } = useToast()
-  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
-  const longPressTimer = useRef<NodeJS.Timeout>();
 
   const copyToClipboard = () => {
     if (navigator.clipboard) {
@@ -32,35 +28,21 @@ export function BookCard({ book }: BookCardProps) {
       });
     }
   }
-
-  const handleTouchStart = useCallback(() => {
-    longPressTimer.current = setTimeout(() => {
-      setIsContextMenuOpen(true);
-    }, 2000); // 2000ms (2s) delay for long press
-  }, []);
-
-  const handleTouchEnd = useCallback(() => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
+  
+  const handleBookClick = (e: React.MouseEvent) => {
+    // Left click opens the book
+    if (e.button === 0) {
+      window.open(book.pdfUrl, '_blank', 'noopener,noreferrer');
     }
-  }, []);
-
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsContextMenuOpen(true);
   };
 
   return (
-    <DropdownMenu open={isContextMenuOpen} onOpenChange={setIsContextMenuOpen}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
           <Card 
-            className="group overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
-            onContextMenu={handleContextMenu}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-            onTouchMove={handleTouchEnd} // Cancel long press if user scrolls
+            className="group overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 cursor-pointer"
           >
-            <Link href={book.pdfUrl} target="_blank" rel="noopener noreferrer" aria-label={`Lire ${book.title}`} className="focus:outline-none" tabIndex={-1}>
+            <div onClick={handleBookClick}>
               <CardContent className="p-0">
                   <div className="aspect-[2/3] w-full">
                     <Image
@@ -70,15 +52,16 @@ export function BookCard({ book }: BookCardProps) {
                       height={600}
                       className="h-full w-full object-cover"
                       data-ai-hint={book.aiHint}
+                      priority
                     />
                   </div>
               </CardContent>
-            </Link>
-            <CardFooter className="p-3">
-              <h3 className="font-headline text-sm font-semibold truncate" title={book.title}>
-                {book.title}
-              </h3>
-            </CardFooter>
+              <CardFooter className="p-3">
+                <h3 className="font-headline text-sm font-semibold truncate" title={book.title}>
+                  {book.title}
+                </h3>
+              </CardFooter>
+            </div>
           </Card>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
